@@ -34,6 +34,9 @@ stages:
     
     - script: mvn clean install -DskipTests=true
       displayName: 'Maven Clean Install'
-      
+    
+    - script: mvn test
+      displayName: 'Maven Test'
+
     - script: mvn package -DskipTests
       displayName: 'Maven Package'
