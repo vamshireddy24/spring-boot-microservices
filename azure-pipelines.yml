@@ -3,7 +3,13 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- master
+ branches:
+   include:
+     - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
 
 resources:
 - repo: self
@@ -13,20 +19,21 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build image
+  displayName: Build mavan
   jobs:
   - job: Build
     displayName: Build
-    pool:
-      vmImage: ubuntu-latest
     steps:
+    - task: JavaToolInstaller@1
+      inputs:
+        versionSpec: '17'
+    
     - task: Maven@4
       inputs:
-        mavenPomFile: 'pom.xml'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        javaHomeOption: 'JDKVersion'
-        mavenVersionOption: 'Default'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
+        mavenVersionOption: '3.x'
+    
+    - script: mvn clean install -DskipTests=true
+      displayName: 'Maven Clean Install'
+      
+    - script: mvn package -DskipTests
+      displayName: 'Maven Package'
